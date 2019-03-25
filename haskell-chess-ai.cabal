@@ -1,0 +1,60 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.1.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 8c72f04b0c618e45719eaece7e82f5b0e4435b2bbe565fe0b8b194b0f5116850
+
+name:           haskell-chess-ai
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/mmsbrggr/haskell-chess-ai#readme>
+homepage:       https://github.com/mmsbrggr/haskell-chess-ai#readme
+bug-reports:    https://github.com/mmsbrggr/haskell-chess-ai/issues
+author:         Marcel Moosbrugger
+copyright:      2019 Marcel Moosbrugger
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/mmsbrggr/haskell-chess-ai
+
+library
+  exposed-modules:
+      Lib
+  other-modules:
+      Paths_haskell_chess_ai
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+  default-language: Haskell2010
+
+executable haskell-chess-ai-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_haskell_chess_ai
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , haskell-chess-ai
+  default-language: Haskell2010
+
+test-suite haskell-chess-ai-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_haskell_chess_ai
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , haskell-chess-ai
+  default-language: Haskell2010
