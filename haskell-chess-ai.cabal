@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8c72f04b0c618e45719eaece7e82f5b0e4435b2bbe565fe0b8b194b0f5116850
+-- hash: 50782b0e1df715332df06514420f4b4d5e1cb7141b92a8c1e374a23209b9d56c
 
 name:           haskell-chess-ai
 version:        0.1.0.0
@@ -25,7 +25,8 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      Board
+      Moves
   other-modules:
       Paths_haskell_chess_ai
   hs-source-dirs:
