@@ -19,9 +19,12 @@ description:         Please see the README on GitHub at <https://github.com/mmsb
 
 dependencies:
 - base >= 4.7 && < 5
+- vector
+- split
 
 library:
   source-dirs: src
+  default-extensions: DeriveAnyClass
 
 executables:
   haskell-chess-ai-exe:
@@ -44,3 +47,5 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - haskell-chess-ai
+    - hspec
+    - QuickCheck
