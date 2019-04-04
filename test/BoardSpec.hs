@@ -1,9 +1,12 @@
 module BoardSpec where
 
+import qualified Data.Vector.Unboxed as V
+import Data.Int (Int8)
 import Test.Hspec
 import Test.QuickCheck
-
 import Board
+import Board.Print
+
 
 instance Arbitrary PieceType where
     arbitrary = arbitraryBoundedEnum
@@ -28,6 +31,12 @@ initialBoardString =
         "  ---------------------------------\n" ++
         "    A   B   C   D   E   F   G   H\n"
 
+whitePieces :: V.Vector (Int8, Int8)
+whitePieces = V.fromList [(8,1), (9,1), (10,1), (11,1), (12,1), (13,1), (14,1), (15,1), (0,2), (1,3), (2,4), (3,5), (4,6), (5,4), (6,3), (7,2)]
+
+blackPieces :: V.Vector (Int8, Int8)
+blackPieces = V.fromList [(48,-1), (49,-1), (50,-1), (51,-1), (52,-1), (53,-1), (54,-1), (55,-1), (56,-2), (57,-3), (58,-4), (59,-5), (60,-6), (61,-4), (62,-3), (63,-2)]
+
 spec :: Spec
 spec = do
     describe "piece type to number" $ do
@@ -41,3 +50,11 @@ spec = do
     describe "show initial board" $ do
         it "should return the correct string" $ do
             show initialBoardState `shouldBe` initialBoardString
+
+    describe "white pieces" $ do
+        it "should be correct" $ do
+            getWhitePieces initialBoardState `shouldBe` whitePieces 
+    
+    describe "black pieces" $ do
+        it "should be correct" $ do
+            getBlackPieces initialBoardState `shouldBe` blackPieces 

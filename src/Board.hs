@@ -1,75 +1,56 @@
 module Board where
 
 import           Data.Int                       ( Int8 )
-import           Data.List                      ( intercalate )
-import           Data.Char                      ( toUpper
-                                                , toLower
-                                                )
-import           Data.List.Split                ( chunksOf )
 import qualified Data.Vector.Unboxed           as V
 
-data Color = White | Black
+type Field = Int8
+type Piece = Int8
+type Index = Int8
+
+data Color = White | Black deriving (Eq)
+
 data PieceType = Pawn | Rook | Knight | Bishop | Queen | King deriving (Eq, Enum, Bounded)
-data BoardState = BoardState { getBoard :: (V.Vector Int8) }
 
-instance Show PieceType
-    where
-    show Pawn   = "P"
-    show Rook   = "R"
-    show Knight = "N"
-    show Bishop = "B"
-    show Queen  = "Q"
-    show King   = "K"
-
-instance Show BoardState where
-    show bs = unlines 
-            $ (++ [letterRow])
-            $ (separator :)
-            $ map showRow
-            $ reverse
-            $ zip [1..]
-            $ chunksOf 8 
-            $ V.toList
-            $ getBoard bs
-      where
-        separator = "  " ++ replicate 33 '-'
-        letterRow = "    " ++ intercalate "   " ["A", "B", "C", "D", "E", "F", "G", "H"]
-        showRow (n,r) = show n ++ " | " ++ intercalate " | " (map showField r) ++ " |\n" ++ separator 
-        showField 0 = " "
-        showField f = if f < 0
-            then map toLower $ showField (-f)
-            else map toUpper $ show $ numberToPieceType f
+data BoardState = BoardState { getBoard       :: (V.Vector Field)
+                             , getWhitePieces :: (V.Vector (Index, Piece))
+                             , getBlackPieces :: (V.Vector (Index, Piece))
+                             }
 
 initialBoardState :: BoardState
-initialBoardState = BoardState board
+initialBoardState = BoardState board (wPawns V.++ wBack) (bPawns V.++ bBack) 
   where
+    wBack  = backRow White
+    bBack  = backRow Black
+    wPawns = pawnRow White
+    bPawns = pawnRow Black
     board = V.concat
-        [ pieceRow White
-        , pawnRow White
+        [ snd $ V.unzip wBack 
+        , snd $ V.unzip wPawns 
         , emptyRow
         , emptyRow
         , emptyRow
         , emptyRow
-        , pawnRow Black
-        , pieceRow Black
+        , snd $ V.unzip bPawns 
+        , snd $ V.unzip bBack
         ]
 
-pieceRow :: Color -> V.Vector Int8
-pieceRow c = V.fromList $ map ((* colorSign c) . pieceTypeToNumber) pieces
-    where pieces = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
+backRow :: Color -> V.Vector (Index, Piece)
+backRow c | c == White = V.fromList $ zip [0 ..] pieces
+           | otherwise  = V.fromList $ zip [56 ..] $ map (* (-1)) pieces
+  where
+    pieces = map pieceTypeToNumber types
+    types  = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
 
-pawnRow :: Color -> V.Vector Int8
-pawnRow c = V.map (* colorSign c) (V.replicate 8 $ pieceTypeToNumber Pawn)
+pawnRow :: Color -> V.Vector (Index, Piece)
+pawnRow c | c == White = V.fromList $ zip [8 ..] pawns
+          | otherwise  = V.fromList $ zip [48..] $ map (* (-1)) pawns
+    where pawns = replicate 8 $ pieceTypeToNumber Pawn
 
-emptyRow :: V.Vector Int8
+emptyRow :: V.Vector Field
 emptyRow = V.replicate 8 0
 
-colorSign :: Color -> Int8
-colorSign White = 1
-colorSign Black = -1
-
-pieceTypeToNumber :: PieceType -> Int8
+pieceTypeToNumber :: PieceType -> Piece
 pieceTypeToNumber = fromIntegral . (+ 1) . fromEnum
 
-numberToPieceType :: Int8 -> PieceType
+numberToPieceType :: Piece -> PieceType
 numberToPieceType n = toEnum $ fromIntegral (n - 1)
