@@ -8,13 +8,21 @@ import           Data.List.Split                ( chunksOf )
 import qualified Data.Vector.Generic           as V
 import           Board
 
-instance Show PieceType where
+instance Show FieldType where
+    show Empty  = " "
+    show Border = "X"
     show Pawn   = "P"
     show Rook   = "R"
     show Knight = "N"
     show Bishop = "B"
     show Queen  = "Q"
     show King   = "K"
+
+instance Show Field where
+    show f = transformator $ show t
+        where t = getFieldType f
+              c = getFieldColor f
+              transformator = if c == White then map toUpper else map toLower
 
 instance Show BoardState where
     show bs =
@@ -34,10 +42,6 @@ instance Show BoardState where
         showRow (n, r) =
             show n
                 ++ " | "
-                ++ intercalate " | " (map showField r)
+                ++ intercalate " | " (map show r)
                 ++ " |\n"
                 ++ separator
-        showField 0 = " "
-        showField f = if f < 0
-            then map toLower $ showField (-f)
-            else map toUpper $ show $ numberToPieceType f

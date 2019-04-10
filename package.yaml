@@ -21,10 +21,14 @@ dependencies:
 - base >= 4.7 && < 5
 - vector
 - split
+- vector-th-unbox
 
 library:
   source-dirs: src
-  default-extensions: DeriveAnyClass
+  default-extensions: TemplateHaskell 
+                    , TypeFamilies
+                    , MultiParamTypeClasses
+                    , GeneralizedNewtypeDeriving
 
 executables:
   haskell-chess-ai-exe:
