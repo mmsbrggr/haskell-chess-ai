@@ -31,6 +31,9 @@ initialBoardString =
         "  ---------------------------------\n" ++
         "    A   B   C   D   E   F   G   H\n"
 
+initialBoard :: V.Vector Field
+initialBoard = V.fromList [8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,2,3,4,5,6,4,3,2,8,8,1,1,1,1,1,1,1,1,8,8,0,0,0,0,0,0,0,0,8,8,0,0,0,0,0,0,0,0,8,8,0,0,0,0,0,0,0,0,8,8,0,0,0,0,0,0,0,0,8,8,-1,-1,-1,-1,-1,-1,-1,-1,8,8,-2,-3,-4,-5,-6,-4,-3,-2,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]
+
 whitePieces :: V.Vector (Int8, Int8)
 whitePieces = V.fromList [(8,1), (9,1), (10,1), (11,1), (12,1), (13,1), (14,1), (15,1), (0,2), (1,3), (2,4), (3,5), (4,6), (5,4), (6,3), (7,2)]
 
@@ -50,6 +53,10 @@ spec = do
     describe "show initial board" $ do
         it "should return the correct string" $ do
             show initialBoardState `shouldBe` initialBoardString
+
+    describe "board" $ do
+        it "should return the correct vector" $ do
+            getBoard initialBoardState `shouldBe` initialBoard
 
     describe "white pieces" $ do
         it "should be correct" $ do

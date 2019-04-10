@@ -26,7 +26,7 @@ instance Show BoardState where
             $ zip [1 ..]
             $ chunksOf 8
             $ V.toList
-            $ getBoard bs
+            $ getBoardWithoutBorder bs
       where
         separator = "  " ++ replicate 33 '-'
         letterRow =
