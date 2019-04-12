@@ -4,14 +4,22 @@ module Board
     , Color(..)
     , FieldType(..)
     , BoardState
+    , emptyField
     , initialBoardState
     , getBoardWithoutBorder
-    , getBoard
-    , getWhitePieces
-    , getBlackPieces
+    , getPieces
+    , getPiecesIndices
     , getFieldType
     , getFieldColor
+    , changeIndexBy
+    , getField
+    , isOwnPiece
+    , isOpponentPiece
+    , isPawnRowIndex
+    , isEmpty
+    , opponent
     )
 where
 
 import Board.Internal
+import Board.Types

@@ -5,6 +5,7 @@ import Data.Int (Int8)
 import Test.Hspec
 import Test.QuickCheck
 import Board.Internal
+import Board.Types
 import Board.Print
 
 
@@ -41,10 +42,10 @@ initialBoard :: V.Vector Field
 initialBoard = V.fromList $ map Field [7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,2,3,4,5,6,4,3,2,7,7,1,1,1,1,1,1,1,1,7,7,0,0,0,0,0,0,0,0,7,7,0,0,0,0,0,0,0,0,7,7,0,0,0,0,0,0,0,0,7,7,0,0,0,0,0,0,0,0,7,7,-1,-1,-1,-1,-1,-1,-1,-1,7,7,-2,-3,-4,-5,-6,-4,-3,-2,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]
 
 whitePieces :: V.Vector (Index, Field)
-whitePieces = V.fromList $ map (mapTuple Index Field) [(8,1), (9,1), (10,1), (11,1), (12,1), (13,1), (14,1), (15,1), (0,2), (1,3), (2,4), (3,5), (4,6), (5,4), (6,3), (7,2)]
+whitePieces = V.fromList $ map (mapTuple Index Field) [(31,1), (32,1), (33,1), (34,1), (35,1), (36,1), (37,1), (38,1), (21,2), (22,3), (23,4), (24,5), (25,6), (26,4), (27,3), (28,2)]
 
 blackPieces :: V.Vector (Index, Field)
-blackPieces = V.fromList $ map (mapTuple Index Field) [(48,-1), (49,-1), (50,-1), (51,-1), (52,-1), (53,-1), (54,-1), (55,-1), (56,-2), (57,-3), (58,-4), (59,-5), (60,-6), (61,-4), (62,-3), (63,-2)]
+blackPieces = V.fromList $ map (mapTuple Index Field) [(81,-1), (82,-1), (83,-1), (84,-1), (85,-1), (86,-1), (87,-1), (88,-1), (91,-2), (92,-3), (93,-4), (94,-5), (95,-6), (96,-4), (97,-3), (98,-2)]
 
 spec :: Spec
 spec = do
@@ -70,8 +71,8 @@ spec = do
 
     describe "white pieces" $ do
         it "should be correct" $ do
-            getWhitePieces initialBoardState `shouldBe` whitePieces 
+            getPieces White initialBoardState `shouldBe` whitePieces 
     
     describe "black pieces" $ do
         it "should be correct" $ do
-            getBlackPieces initialBoardState `shouldBe` blackPieces 
+            getPieces Black initialBoardState `shouldBe` blackPieces 

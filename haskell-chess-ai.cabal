@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 1fd0aaf08c7482dda42ec80b27f1789e5a28630f347c34153733933dd54335ad
+-- hash: 74c7addded9c23b58402045b2b44e6019a5c0b5e451703f36b4ad4a46a4d5752
 
 name:           haskell-chess-ai
 version:        0.1.0.0
@@ -28,7 +28,10 @@ library
       Board
       Board.Internal
       Board.Print
+      Board.Types
       Moves
+      Moves.Internal
+      Utils
   other-modules:
       Paths_haskell_chess_ai
   hs-source-dirs:
@@ -36,6 +39,7 @@ library
   default-extensions: TemplateHaskell , TypeFamilies , MultiParamTypeClasses , GeneralizedNewtypeDeriving
   build-depends:
       base >=4.7 && <5
+    , random
     , split
     , vector
     , vector-th-unbox
@@ -51,6 +55,7 @@ executable haskell-chess-ai-exe
   build-depends:
       base >=4.7 && <5
     , haskell-chess-ai
+    , random
     , split
     , vector
     , vector-th-unbox
@@ -70,6 +75,7 @@ test-suite haskell-chess-ai-test
     , base >=4.7 && <5
     , haskell-chess-ai
     , hspec
+    , random
     , split
     , vector
     , vector-th-unbox

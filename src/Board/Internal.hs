@@ -10,34 +10,8 @@ All fields (pieces, empty, border) are represented as small integers.
 module Board.Internal where
 
 import           Data.Int                       ( Int8 )
-import           Data.Vector.Unboxed.Base       ( Unbox )
-import           Data.Vector.Unboxed.Deriving
 import qualified Data.Vector.Unboxed           as V
-
-newtype Field = Field Int8 deriving (Eq, Enum)
-derivingUnbox "Field" [t| Field -> Int8 |] [| \ (Field n) -> n |] [| \ n -> Field n |]
-
-
-newtype Index = Index Int8 deriving (Eq, Enum, Show)
-derivingUnbox "Index" [t| Index -> Int8 |] [| \ (Index i) -> i |] [| \ i -> Index i |]
-
-data Color = White | Black deriving (Show, Eq, Enum, Bounded)
-
-data FieldType = Empty | Pawn | Rook | Knight | Bishop | Queen | King | Border
-    deriving (Eq, Enum, Bounded)
-
-data BoardState = BoardState { getBoard       :: V.Vector Field
-                             , getWhitePieces :: V.Vector (Index, Field)
-                             , getBlackPieces :: V.Vector (Index, Field)
-                             }
-
-instance Bounded Field where
-    minBound = createColoredField Black (maxBound :: FieldType)
-    maxBound = createColoredField White (maxBound :: FieldType) 
-
-instance Bounded Index where
-    minBound = Index 0
-    maxBound = Index 119 
+import           Board.Types
 
 borderField :: Field
 borderField = Field 7
@@ -78,16 +52,16 @@ backRow c = V.fromList $ zip (indices c) pieces
   where
     pieces = map (createColoredField c) types
     types  = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
-    indices White = [(Index 0) ..]
-    indices Black = [(Index 56) ..]
+    indices White = [(Index 21) ..]
+    indices Black = [(Index 91) ..]
 
 -- | Returns the pawn row for a given color together with the indices the peices stand on
 pawnRow :: Color -> V.Vector (Index, Field)
 pawnRow c = V.fromList $ zip (indices c) pawns
   where
     pawns = replicate 8 $ createColoredField c Pawn
-    indices White = [(Index 8) ..]
-    indices Black = [(Index 48) ..]
+    indices White = [(Index 31) ..]
+    indices Black = [(Index 81) ..]
 
 -- | Creates a field for a given field type, the color of the returned field is undetermined
 createField :: FieldType -> Field
@@ -106,3 +80,45 @@ getFieldColor (Field n) = if n >= 0 then White else Black
 
 getBoardWithoutBorder :: BoardState -> V.Vector Field
 getBoardWithoutBorder = V.filter (/= borderField) . getBoard
+
+getPieces :: Color -> BoardState -> V.Vector (Index, Field)
+getPieces White = getWhitePieces
+getPieces Black = getBlackPieces
+
+getPiecesIndices :: Color -> BoardState -> V.Vector Index
+getPiecesIndices c bs = fst $ V.unzip $ getPieces c bs
+
+-- | Adds a given offset to an index. It does not perform a range check due to performance reasons
+changeIndexBy :: Index -> Int8 -> Index
+changeIndexBy (Index i) n = Index (i + n)
+
+-- | For a given index returns the field of the board with that index
+getField :: BoardState -> Index -> Field
+getField bs (Index i) = getBoard bs `V.unsafeIndex` fromIntegral i
+
+-- | Returns true iff there is a piece on the field (so it's not empty nor a border field)
+isPiece :: Field -> Bool
+isPiece f = (t /= Border) && (t /= Empty)
+    where t = getFieldType f
+
+-- | For the proponent's color and a given field returns true iff on the field there is one of his pieces
+isOwnPiece :: Color -> Field -> Bool
+isOwnPiece c f = isPiece f && (getFieldColor f == c)
+
+-- | For the proponent's color and a given field returns true iff on the field there is a piece of the opponent
+isOpponentPiece :: Color -> Field -> Bool
+isOpponentPiece c f = isPiece f && (getFieldColor f == opponent c)
+
+-- | Returns the color of the opponent for a given color
+opponent :: Color -> Color
+opponent White = Black
+opponent Black = White
+
+-- | Returns true iff the index refers to a field in the pawn row of the player with the given color
+isPawnRowIndex :: Color -> Index -> Bool
+isPawnRowIndex White (Index n) = 30 < n && n < 39 
+isPawnRowIndex Black (Index n) = 80 < n && n < 89
+
+-- | Returns true iff the given field is empty
+isEmpty :: Field -> Bool
+isEmpty = (== Empty) . getFieldType
