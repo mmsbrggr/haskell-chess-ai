@@ -13,7 +13,7 @@ import qualified Data.Vector.Unboxed           as V
 newtype Field = Field Int8 deriving (Eq, Enum)
 derivingUnbox "Field" [t| Field -> Int8 |] [| \ (Field n) -> n |] [| \ n -> Field n |]
 
-newtype Index = Index Int8 deriving (Eq, Enum, Show)
+newtype Index = Index Int8 deriving (Eq, Enum)
 derivingUnbox "Index" [t| Index -> Int8 |] [| \ (Index i) -> i |] [| \ i -> Index i |]
 
 data Color = White | Black deriving (Show, Eq, Enum, Bounded)
@@ -29,6 +29,3 @@ data BoardState = BoardState { getBoard       :: V.Vector Field
 instance Bounded Index where
     minBound = Index 0
     maxBound = Index 119
-
-indexToInt :: Index -> Int
-indexToInt (Index n) = fromIntegral n

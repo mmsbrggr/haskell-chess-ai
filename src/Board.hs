@@ -18,8 +18,10 @@ module Board
     , isPawnRowIndex
     , isEmpty
     , opponent
+    , indexToInt
     )
 where
 
 import Board.Internal
 import Board.Types
+import Board.Print

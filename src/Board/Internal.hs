@@ -122,3 +122,6 @@ isPawnRowIndex Black (Index n) = 80 < n && n < 89
 -- | Returns true iff the given field is empty
 isEmpty :: Field -> Bool
 isEmpty = (== Empty) . getFieldType
+
+indexToInt :: Index -> Int
+indexToInt (Index n) = fromIntegral n

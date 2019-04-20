@@ -18,7 +18,7 @@ import           Data.Vector.Unboxed.Deriving
 import           Board
 import           Board.Types
 
-newtype Move = Move (Index, Index) deriving (Show)
+newtype Move = Move (Index, Index) deriving newtype (Show)
 derivingUnbox "Move"
     [t| Move -> (Index, Index) |]
     [| \ (Move (from, to)) -> (from, to) |]
@@ -43,7 +43,7 @@ applyMove bs (Move (from, to)) = BoardState board wPieces bPieces
           player    = getFieldColor fromField
           constructPieces c = if player == c
                                  then U.change (getPieces c bs) (from, fromField) (to, fromField)
-                                 else if isOpponentPiece c toField 
+                                 else if isOwnPiece c toField 
                                  then U.remove (to, toField) (getPieces c bs)
                                  else getPieces c bs 
 

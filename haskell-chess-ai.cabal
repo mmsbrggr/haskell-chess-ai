@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 74c7addded9c23b58402045b2b44e6019a5c0b5e451703f36b4ad4a46a4d5752
+-- hash: af201e5083fa101f2bdc55a2a0398f5d59f8f6b0d05e2a86208dc26685491d52
 
 name:           haskell-chess-ai
 version:        0.1.0.0
@@ -36,7 +36,7 @@ library
       Paths_haskell_chess_ai
   hs-source-dirs:
       src
-  default-extensions: TemplateHaskell , TypeFamilies , MultiParamTypeClasses , GeneralizedNewtypeDeriving
+  default-extensions: TemplateHaskell , TypeFamilies , MultiParamTypeClasses , GeneralizedNewtypeDeriving , DerivingStrategies
   build-depends:
       base >=4.7 && <5
     , random

@@ -30,6 +30,7 @@ library:
                     , TypeFamilies
                     , MultiParamTypeClasses
                     , GeneralizedNewtypeDeriving
+                    , DerivingStrategies
 
 executables:
   haskell-chess-ai-exe:
