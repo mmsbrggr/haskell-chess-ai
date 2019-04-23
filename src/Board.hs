@@ -9,6 +9,7 @@ module Board
     , getBoardWithoutBorder
     , getPieces
     , getPiecesIndices
+    , getPiecesFields
     , getFieldType
     , getFieldColor
     , changeIndexBy

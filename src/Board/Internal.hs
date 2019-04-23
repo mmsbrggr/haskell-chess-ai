@@ -41,10 +41,12 @@ initialBoardState = BoardState board (wPawns V.++ wBack) (bPawns V.++ bBack)
 --  | Adds two border rows on the front and to at the back, as well as
 --  | one border column left and right
 addBorderFields :: [V.Vector Field] -> [V.Vector Field]
-addBorderFields rows = map ((borderField `V.cons`) . (`V.snoc` borderField)) rows'
-    where
-        rows' = [borderRow, borderRow] ++ rows ++ [borderRow, borderRow]
-        borderRow = V.replicate 8 borderField
+addBorderFields rows = map
+    ((borderField `V.cons`) . (`V.snoc` borderField))
+    rows'
+  where
+    rows'     = [borderRow, borderRow] ++ rows ++ [borderRow, borderRow]
+    borderRow = V.replicate 8 borderField
 
 -- | Returns the back row for a given color together with the indices the peices stand on
 backRow :: Color -> V.Vector (Index, Field)
@@ -88,6 +90,9 @@ getPieces Black = getBlackPieces
 getPiecesIndices :: Color -> BoardState -> V.Vector Index
 getPiecesIndices c bs = fst $ V.unzip $ getPieces c bs
 
+getPiecesFields :: Color -> BoardState -> V.Vector Field
+getPiecesFields c bs = snd $ V.unzip $ getPieces c bs
+
 -- | Adds a given offset to an index. It does not perform a range check due to performance reasons
 changeIndexBy :: Index -> Int8 -> Index
 changeIndexBy (Index i) n = Index (i + n)
@@ -98,8 +103,7 @@ getField bs (Index i) = getBoard bs `V.unsafeIndex` fromIntegral i
 
 -- | Returns true iff there is a piece on the field (so it's not empty nor a border field)
 isPiece :: Field -> Bool
-isPiece f = (t /= Border) && (t /= Empty)
-    where t = getFieldType f
+isPiece f = (t /= Border) && (t /= Empty) where t = getFieldType f
 
 -- | For the proponent's color and a given field returns true iff on the field there is one of his pieces
 isOwnPiece :: Color -> Field -> Bool
@@ -116,7 +120,7 @@ opponent Black = White
 
 -- | Returns true iff the index refers to a field in the pawn row of the player with the given color
 isPawnRowIndex :: Color -> Index -> Bool
-isPawnRowIndex White (Index n) = 30 < n && n < 39 
+isPawnRowIndex White (Index n) = 30 < n && n < 39
 isPawnRowIndex Black (Index n) = 80 < n && n < 89
 
 -- | Returns true iff the given field is empty
