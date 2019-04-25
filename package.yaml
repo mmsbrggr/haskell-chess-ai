@@ -19,7 +19,10 @@ description:         Please see the README on GitHub at <https://github.com/mmsb
 
 dependencies:
 - base >= 4.7 && < 5
+- mtl
+- primitive
 - vector
+- vector-algorithms
 - split
 - random
 - vector-th-unbox
@@ -31,6 +34,8 @@ library:
                     , MultiParamTypeClasses
                     , GeneralizedNewtypeDeriving
                     , DerivingStrategies
+                    , TupleSections
+                    , FlexibleContexts
 
 executables:
   haskell-chess-ai-exe:

@@ -1,39 +1,51 @@
 module Main where
 
-import System.Random
-import qualified Data.Vector.Generic as G
-import Board
-import Moves
+import           System.Random
+import           Data.Maybe                     ( isNothing
+                                                , fromJust
+                                                )
+import qualified Data.Vector.Generic           as G
+import           Board
+import           Moves
+import           Search
 
 main :: IO ()
-main = playRandomGame White initialBoardState
+main = playBestGame White initialBoardState 
 
-showInitialBoard :: IO ()
-showInitialBoard = putStrLn . show $ initialBoardState
+playBestGame :: Color -> BoardState -> IO ()
+playBestGame c bs = do
+    putStrLn . show $ bs 
+    result <- playBestMove c bs
+    case result of
+        Just newBs -> playBestGame (opponent c) newBs
+        Nothing    -> pure ()
 
-playRandomGame :: Color -> BoardState -> IO ()
-playRandomGame c bs =
-    do result <- playRandomMove c bs
-       case result of
-         Just newBs -> playRandomGame (opponent c) newBs
-         Nothing    -> pure ()
+playAgainstRobot :: Color -> Color -> BoardState -> IO ()
+playAgainstRobot humancolor c bs = do
+    putStrLn . show $ bs
+    result <- if humancolor == c then playHumanMove c bs else playBestMove c bs
+    case result of
+        Just newBs -> playAgainstRobot humancolor (opponent c) newBs
+        Nothing    -> pure ()
 
-playRandomMove :: Color -> BoardState -> IO (Maybe BoardState)
-playRandomMove c bs =
-    do putStrLn "Play move"
-       _ <- getLine
-       let moves = getAllMoves c bs
-       if G.length moves == 0
-          then pure Nothing
-          else do
-              putStrLn "Moves:"
-              putStrLn $ unwords $ map show $ G.toList moves
-              putStrLn ""
-              i <- randomRIO (0, (G.length moves) - 1)
-              let move = moves G.! i
-              putStrLn "Current move:"
-              putStrLn $ show move
-              putStrLn ""
-              let newBs = applyMove bs move
-              putStrLn . show $ newBs
-              pure $ Just newBs 
+playBestMove :: Color -> BoardState -> IO (Maybe BoardState)
+playBestMove c bs = do
+    putStrLn "Play best move:"
+    _ <- getLine
+    let result = getBestMove bs c
+    if isNothing result
+        then pure Nothing
+        else do
+            let move = fromJust result
+            putStrLn "Best move:"
+            putStrLn $ show move
+            putStrLn ""
+            let newBs = applyMove bs move
+            pure $ Just newBs
+
+playHumanMove :: Color -> BoardState -> IO (Maybe BoardState)
+playHumanMove c bs = do
+    putStrLn "Enter move:"
+    move <- fmap read $ getLine
+    let newBs = applyMove bs move
+    pure $ Just newBs

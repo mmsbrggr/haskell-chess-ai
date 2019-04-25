@@ -3,6 +3,7 @@ module Board
     , Index
     , Color(..)
     , FieldType(..)
+    , GamePhase(..)
     , BoardState
     , emptyField
     , initialBoardState

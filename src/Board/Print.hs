@@ -3,7 +3,8 @@ module Board.Print where
 import           Data.Char                      ( toUpper
                                                 , toLower
                                                 )
-import           Data.List                      ( intercalate )
+import           Data.List                      ( intercalate, splitAt, elemIndex )
+import           Data.Maybe                     ( fromJust )
 import           Data.List.Split                ( chunksOf )
 import qualified Data.Vector.Unboxed           as V
 import           Board.Internal
@@ -20,11 +21,11 @@ instance Show FieldType where
     show King   = "K"
 
 instance Show Field where
-    show f = transformator $ show t
+    show f = colorize $ map toUpper $ show t
       where
         t             = getFieldType f
         c             = getFieldColor f
-        transformator = if c == White then map toUpper else map toLower
+        colorize s = if c == White then s else "\x1b[36m" ++ s ++ "\x1b[0m" 
 
 instance Show BoardState where
     show bs = unlines [board, wPieces, bPieces]
@@ -34,12 +35,24 @@ instance Show BoardState where
         bPieces = "Black pieces: " ++ (showPieces $ getBlackPieces bs)
 
 instance Show Index where
-    show (Index i) = (columns !! c) ++ (rows !! r)
+    show (Index i) = map toLower $ (columns !! c) ++ (rows !! r)
       where
-        columns = ["a", "A", "B", "C", "D", "E", "F", "G", "H", "h"]
-        rows = ["-1", "-0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
         c       = (fromIntegral i) `mod` 10
         r       = (fromIntegral i) `div` 10
+
+instance Read Index where
+    readsPrec _ string = [(Index i, "")]
+        where 
+            (c, r) = splitAt 1 string
+            c'     = fromJust $ elemIndex (map toUpper c) columns
+            r'     = fromJust $ elemIndex (map toUpper r) rows
+            i      = fromIntegral $ (r' * 10) + c' 
+            
+columns :: [String]
+columns = ["a", "A", "B", "C", "D", "E", "F", "G", "H", "h"]
+
+rows :: [String]
+rows = ["-1", "-0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
 
 showBoard :: V.Vector Field -> String
 showBoard board =

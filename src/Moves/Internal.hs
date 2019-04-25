@@ -12,17 +12,26 @@ module Moves.Internal where
 
 import qualified Data.Vector.Unboxed           as V
 import qualified Utils                         as U
+import           Data.List                      ( splitAt )
 import           Data.Int                       ( Int8 )
 import           Data.Vector.Unboxed.Base       ( Unbox )
 import           Data.Vector.Unboxed.Deriving
 import           Board
 import           Board.Types
 
-newtype Move = Move (Index, Index) deriving newtype (Show)
+newtype Move = Move (Index, Index)
 derivingUnbox "Move"
     [t| Move -> (Index, Index) |]
     [| \ (Move (from, to)) -> (from, to) |]
     [| \ (from, to) -> Move (from, to) |]
+
+instance Show Move where
+    show (Move (f, t)) = show f ++ show t
+
+instance Read Move where
+    readsPrec _ s = [(Move (read f, read t), "")] 
+        where
+            (f, t) = splitAt 2 s
 
 -- | Succinct type for the movement state:
 -- | Index of moved piece, color of moved piece and the state of the board
@@ -144,3 +153,11 @@ isIllegalDestination :: MoveState -> Index -> Bool
 isIllegalDestination (_, c, bs) dest =
     getFieldType f == Border || isOwnPiece c f
     where f = getField bs dest
+
+-- | Returns the from index of the given move
+getFrom :: Move -> Index
+getFrom (Move (f, _)) = f
+
+-- | Returns the to index of the given move
+getTo :: Move -> Index
+getTo (Move (_, t)) = t

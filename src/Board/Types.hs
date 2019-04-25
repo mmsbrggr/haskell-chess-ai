@@ -26,6 +26,8 @@ data BoardState = BoardState { getBoard       :: V.Vector Field
                              , getBlackPieces :: V.Vector (Index, Field)
                              }
 
+data GamePhase = Opening | MiddleGame | EndGame deriving (Eq, Show)
+
 instance Bounded Index where
     minBound = Index 0
     maxBound = Index 119

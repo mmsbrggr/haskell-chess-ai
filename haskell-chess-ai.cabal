@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2b0b95fda81a6bfcb0573492bc37fa3d5ea837fe0ec9b55e89d2f6a3cd3b63f4
+-- hash: 7e8857a1e90f3d2341470fdcc60dfcf5cbbcdf0c9f43dff4e3130c76865f6031
 
 name:           haskell-chess-ai
 version:        0.1.0.0
@@ -31,19 +31,25 @@ library
       Board.Types
       Evaluation
       Evaluation.Internal
+      Evaluation.Tables
       Moves
       Moves.Internal
+      Search
+      Search.Internal
       Utils
   other-modules:
       Paths_haskell_chess_ai
   hs-source-dirs:
       src
-  default-extensions: TemplateHaskell , TypeFamilies , MultiParamTypeClasses , GeneralizedNewtypeDeriving , DerivingStrategies
+  default-extensions: TemplateHaskell , TypeFamilies , MultiParamTypeClasses , GeneralizedNewtypeDeriving , DerivingStrategies , TupleSections , FlexibleContexts
   build-depends:
       base >=4.7 && <5
+    , mtl
+    , primitive
     , random
     , split
     , vector
+    , vector-algorithms
     , vector-th-unbox
   default-language: Haskell2010
 
@@ -57,9 +63,12 @@ executable haskell-chess-ai-exe
   build-depends:
       base >=4.7 && <5
     , haskell-chess-ai
+    , mtl
+    , primitive
     , random
     , split
     , vector
+    , vector-algorithms
     , vector-th-unbox
   default-language: Haskell2010
 
@@ -77,8 +86,11 @@ test-suite haskell-chess-ai-test
     , base >=4.7 && <5
     , haskell-chess-ai
     , hspec
+    , mtl
+    , primitive
     , random
     , split
     , vector
+    , vector-algorithms
     , vector-th-unbox
   default-language: Haskell2010
