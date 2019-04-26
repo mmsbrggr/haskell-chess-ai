@@ -21,9 +21,11 @@ module Board
     , isEmpty
     , opponent
     , indexToInt
+    , getBoardStateFromFEN
     )
 where
 
 import Board.Internal
 import Board.Types
 import Board.Print
+import Board.FEN

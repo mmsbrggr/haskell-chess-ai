@@ -1,4 +1,8 @@
+-- | TODO: This was a evening hack. This could be cleaned up with a GameTree etc. (but it works)
+
 module Search.Internal where
+
+import           Debug.Trace
 
 import           Data.Maybe                     ( fromJust
                                                 , isNothing
@@ -16,7 +20,7 @@ newtype Alpha = Alpha Int deriving (Eq, Ord)
 newtype Beta  = Beta Int deriving (Eq, Ord)
 
 type SearchState = (Alpha, Beta)
-type SearchResult = Maybe (Int, Maybe Move)
+type SearchResult = Maybe (Int, Move)
 type Depth = Int
 
 depthLimit :: Depth
@@ -48,7 +52,7 @@ getBestMove bs c =
     let gp = gamePhase bs
         (result, _) =
                 runState (alphaBeta bs gp c depthLimit) initialSearchState
-    in  snd $ fromJust result
+    in  maybe Nothing (Just . snd) result
 
 getAlpha :: MonadState SearchState m => m Alpha
 getAlpha = gets fst
@@ -73,7 +77,7 @@ alphaBeta
     -> Color
     -> Depth
     -> m SearchResult
-alphaBeta bs gp _ 0 = pure $ Just (valueOf bs gp, Nothing)
+alphaBeta bs gp _ 0 = pure $ Nothing 
 alphaBeta bs gp c d = do
     (Alpha a) <- getAlpha
     (Beta  b) <- getBeta
@@ -95,7 +99,8 @@ alphaBetaBody bs gp c d moves = do
     stateOld <- get
     result   <- V.foldM' (alphaBetaStep bs gp c d) Nothing moves
     put stateOld
-    pure result
+    let baseCase = V.foldr (baseStep bs gp c) Nothing moves
+    pure $ maybe baseCase Just result
 
 alphaBetaStep
     :: MonadState SearchState m
@@ -114,9 +119,20 @@ alphaBetaStep bs gp c d accumulator move = do
         Just (value, _) -> if isNothing accumulator || cmp value accumulator
             then do
                 setLimit value
-                pure $ Just (value, Just move)
+                pure $ Just (value, move)
             else pure accumulator
   where
     cmp v (Just (a, _)) = if isMaximizing c then v > a else v < a
     setLimit l =
         if isMaximizing c then setAlpha (Alpha l) else setBeta (Beta l)
+
+baseStep
+    :: BoardState -> GamePhase -> Color -> Move -> SearchResult -> SearchResult
+baseStep bs gp c move accumulator =
+    if isNothing accumulator || cmp value accumulator
+        then Just (value, move) 
+        else accumulator
+  where
+    child = applyMove bs move
+    value = valueOf child gp
+    cmp v (Just (a, _)) = if isMaximizing c then v > a else v < a
